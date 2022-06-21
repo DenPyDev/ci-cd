@@ -1,0 +1,19 @@
+version: "3.4"
+services:
+  my_maps_app:
+    container_name: my_maps_app
+    build:
+      context: ./maps_app
+    ports:
+      - 3000:2000
+    restart: always
+
+
+  my_main_app:
+    container_name: my_main_app
+    build:
+      context: ./main_app
+    ports:
+      - 5000:2000
+    restart: always
+

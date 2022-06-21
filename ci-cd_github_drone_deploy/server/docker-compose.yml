@@ -1,0 +1,42 @@
+version: "3"
+services:
+  watchtower:
+    container_name: watchtower
+    image: containrrr/watchtower:latest
+    networks:
+      - backend
+    logging:
+      driver: journald
+      options: {}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/timezone:/etc/timezone:ro
+      - /root/.docker/config.json:/config.json
+    restart: unless-stopped
+
+    environment:
+      TZ: Europe/London
+      # WATCHTOWER_LIFECYCLE_HOOKS: "true"
+      WATCHTOWER_NOTIFICATIONS: shoutrrr
+      WATCHTOWER_NOTIFICATION_URL: telegram://TG_BOT_ID@telegram/?channels=TG_CHAT_ID
+      # WATCHTOWER_DEBUG: "true"
+      # WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_LABEL_ENABLE: "true"
+      WATCHTOWER_SCHEDULE: "* * * * * *" #https://crontab.guru/#*_*_*_*_*
+
+  my_flask:
+    container_name: my_flask
+    image: index.docker.io/denisbackenddev/my_oriv_repo:latest
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      # - com.centurylinklabs.watchtower.monitor-only=true
+
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /root/.docker/config.json:/config.json
+    ports:
+      - "2000:2000"
+networks:
+  backend:
+    external: true
+
